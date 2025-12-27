@@ -1,7 +1,6 @@
  **clean algorithm-style pseudocode** for reference.
 
 ---
-
 ## Breadth-First Search (BFS)
 
 ```
