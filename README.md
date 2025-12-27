@@ -1,247 +1,193 @@
-ALPHABETA(depth, node, maximizingPlayer, values, alpha, beta)
+ **clean algorithm-style pseudocode** for reference.
 
-if depth = maximumDepth then return values[node]
+---
 
-if maximizingPlayer then best ← −∞ for each child of node do val ← ALPHABETA(depth+1, child, FALSE, values, alpha, beta) best ← max(best, val) alpha ← max(alpha, best) if beta ≤ alpha then break // Beta cut-off return best
+## Breadth-First Search (BFS)
 
-else best ← +∞ for each child of node do val ← ALPHABETA(depth+1, child, TRUE, values, alpha, beta) best ← min(best, val) beta ← min(beta, best) if beta ≤ alpha then break // Alpha cut-off return best WATER_JUG(jug1, jug2, target) create empty set VISITED create empty queue Q
+```
+BFS(G, start):
+    create empty QUEUE
+    add start to QUEUE
+    mark start as VISITED
 
-enqueue (0, 0, path) into Q
+    while QUEUE is not empty:
+        node = dequeue
+        print node
 
-while Q is not empty do (a, b, path) ← dequeue from Q
+        for each neighbor in G[node]:
+            if neighbor not in VISITED:
+                add neighbor to QUEUE
+                mark neighbor as VISITED
+```
 
-if (a, b) is in VISITED then
-    continue
-add (a, b) to VISITED
+---
 
-if a = target OR b = target then
-    return path
+## Depth-First Search (Iterative)
 
-enqueue (a, jug2) into Q          // fill jug2
-enqueue (jug1, b) into Q          // fill jug1
-enqueue (0, b) into Q             // empty jug1
-enqueue (a, 0) into Q             // empty jug2
-pour ← min(a, jug2 − b)
-enqueue (a − pour, b + pour)      // jug1 → jug2
-pour ← min(jug1 − a, b)
-enqueue (a + pour, b − pour)      // jug2 → jug1
-Navigation Menu
-Csa1751
+```
+DFS(G, start):
+    create empty STACK
+    add start to STACK
 
-Code
-Issues
-Pull requests
- 0 stars
- 0 forks
- 0 watching
- 1 Branch
- 0 Tags
- Activity
-Public repository
-gayathri9959/Csa1751
-Name	
-gayathri9959
-gayathri9959
-3 hours ago
-%Database facts.pl
-3 hours ago
-A star.png
-4 days ago
-A star.py
-4 days ago
-ASearch.png
-4 days ago
-AlphaBeta.png
-4 days ago
-BFS.png
-4 days ago
-DFS.png
-4 days ago
-Decision Tree.png
-4 days ago
-Feed forward neutral network.py
-4 days ago
-GBFS.py
-4 days ago
-GeedySearch.png
-4 days ago
-JUG PROBLEM.py
-4 days ago
-Minimax.png
-4 days ago
-Neuralnetworks.png
-4 days ago
-README.md
-4 days ago
-UCS.png
-4 days ago
-Untitled.ipynb
-last week
-alpha beta.py
-4 days ago
-bird.pl
-3 hours ago
-colour.pl
-3 hours ago
-dfs.ipynb
-last week
-diet.pl
-3 hours ago
-disease.pl
-3 hours ago
-minimax.py
-4 days ago
-planet.pl
-3 hours ago
-stu,tea.pl
-3 hours ago
-tic tac toe.py
-4 days ago
-tree desicion.py
-4 days ago
-ucs.py
-4 days ago
-water jug.png
-4 days ago
-Repository files navigation
-README
-BFS(G, start) create empty set VISITED create empty queue Q
+    while STACK is not empty:
+        node = pop STACK
 
-add start to VISITED
-enqueue start into Q
+        if node not in VISITED:
+            print node
+            add node to VISITED
 
-while Q is not empty do
-    node ← dequeue from Q
+            for each neighbor in G[node]:
+                push neighbor to STACK
+```
+
+---
+
+## Depth-First Search (Recursive)
+
+```
+DFS-Recursive(G, node, VISITED):
+    add node to VISITED
     print node
 
-    for each neighbour in G[node] do
-        if neighbour not in VISITED then
-            add neighbour to VISITED
-            enqueue neighbour into Q
-DFS(v): mark v visited print v for each adjacent u of v if u not visited DFS(u) A_STAR(G, H, start, goal) create empty list OPEN create empty set CLOSED create map g_cost create map PARENT
+    for each neighbor in G[node]:
+        if neighbor not in VISITED:
+            DFS-Recursive(G, neighbor, VISITED)
+```
 
-add start to OPEN g_cost[start] ← 0 PARENT[start] ← NULL
+---
 
-while OPEN is not empty do node ← element in OPEN with lowest (g_cost[node] + H[node]) remove node from OPEN
+## A* Search Algorithm
 
-if node = goal then
-    return path using PARENT
+```
+A_STAR(G, start, goal):
+    open_list = priority queue
+    add start to open_list with priority 0
 
-add node to CLOSED
+    g_cost[start] = 0
+    parent[start] = None
 
-for each neighbour, cost in G[node] do
-    if neighbour not in CLOSED then
-        new_cost ← g_cost[node] + cost
-        if neighbour not in g_cost OR new_cost < g_cost[neighbour] then
-            g_cost[neighbour] ← new_cost
-            PARENT[neighbour] ← node
-            add neighbour to OPEN
-ALPHABETA(depth, node, maximizingPlayer, values, alpha, beta)
+    while open_list is not empty:
+        current = node in open_list with lowest f_cost
 
-if depth = maximumDepth then return values[node]
+        if current == goal:
+            reconstruct path using parent[]
+            return path
 
-if maximizingPlayer then best ← −∞ for each child of node do val ← ALPHABETA(depth+1, child, FALSE, values, alpha, beta) best ← max(best, val) alpha ← max(alpha, best) if beta ≤ alpha then break // Beta cut-off return best
+        for each neighbor in G[current]:
+            new_g = g_cost[current] + cost(current, neighbor)
 
-else best ← +∞ for each child of node do val ← ALPHABETA(depth+1, child, TRUE, values, alpha, beta) best ← min(best, val) beta ← min(beta, best) if beta ≤ alpha then break // Alpha cut-off return best WATER_JUG(jug1, jug2, target) create empty set VISITED create empty queue Q
+            if neighbor not in g_cost OR new_g < g_cost[neighbor]:
+                g_cost[neighbor] = new_g
+                f_cost = new_g + heuristic(neighbor)
+                add neighbor to open_list with priority f_cost
+                parent[neighbor] = current
+```
 
-enqueue (0, 0, path) into Q
+---
 
-while Q is not empty do (a, b, path) ← dequeue from Q
+## Water Jug Problem (State-Space Search)
 
-if (a, b) is in VISITED then
-    continue
-add (a, b) to VISITED
+```
+WATER_JUG(capA, capB, target):
+    create empty VISITED set
+    create QUEUE with initial state (0, 0)
 
-if a = target OR b = target then
-    return path
+    while QUEUE not empty:
+        (x, y) = dequeue
 
-enqueue (a, jug2) into Q          // fill jug2
-enqueue (jug1, b) into Q          // fill jug1
-enqueue (0, b) into Q             // empty jug1
-enqueue (a, 0) into Q             // empty jug2
-pour ← min(a, jug2 − b)
-enqueue (a − pour, b + pour)      // jug1 → jug2
-pour ← min(jug1 − a, b)
-enqueue (a + pour, b − pour)      // jug2 → jug1
-return NO SOLUTION DECISION_TREE(outlook, humidity)
+        if x == target OR y == target:
+            return path
 
-if outlook = "Sunny" then if humidity = "High" then return "No" else return "Yes"
+        generate next valid states:
+            fill A
+            fill B
+            empty A
+            empty B
+            pour A -> B
+            pour B -> A
 
-else if outlook = "Overcast" then return "Yes"
+        add unvisited states to QUEUE
+```
 
-else if outlook = "Rain" then return "Yes" FEED_FORWARD_NEURAL_NETWORK(X, W1, b1, W2, b2)
+---
 
-apply input X to the network
+## Minimax Algorithm
 
-calculate hidden layer input: hidden_input ← X × W1 + b1
+```
+MINIMAX(node, depth, isMax):
+    if depth == 0 OR node is terminal:
+        return evaluation(node)
 
-apply activation function: hidden_output ← sigmoid(hidden_input)
+    if isMax:
+        best = -∞
+        for each child in node:
+            value = MINIMAX(child, depth-1, False)
+            best = max(best, value)
+        return best
 
-calculate output layer input: final_input ← hidden_output × W2 + b2
+    else:
+        best = +∞
+        for each child in node:
+            value = MINIMAX(child, depth-1, True)
+            best = min(best, value)
+        return best
+```
 
-apply activation function: final_output ← sigmoid(final_input)
+---
 
-return final_output TIC_TAC_TOE()
+## Alpha-Beta Pruning
 
-initialize board with 9 empty positions
+```
+ALPHA_BETA(node, depth, α, β, isMax):
+    if depth == 0 OR node is terminal:
+        return evaluation(node)
 
-for each turn from 0 to 8 do display the board if turn is even then player ← 'X' else player ← 'O'
+    if isMax:
+        best = -∞
+        for child in node:
+            value = ALPHA_BETA(child, depth-1, α, β, False)
+            best = max(best, value)
+            α = max(α, best)
+            if β <= α:
+                break   // prune
+        return best
 
-read position from player
-place player mark at position
+    else:
+        best = +∞
+        for child in node:
+            value = ALPHA_BETA(child, depth-1, α, β, True)
+            best = min(best, value)
+            β = min(β, best)
+            if β <= α:
+                break   // prune
+        return best
+```
 
-if WIN(player) then
-    display board
-    print player wins
-    stop game
-display board print Draw UNIFORM_COST_SEARCH(G, start, goal)
+---
 
-create empty set VISITED create priority queue PQ
+## Feed-Forward Neural Network (Forward Pass)
 
-insert (0, start) into PQ // cost, node
+```
+FORWARD_PASS(inputs, weights, bias):
+    for each hidden_neuron:
+        h = Σ(input * weight) + bias
+        apply activation
 
-while PQ is not empty do (cost, node) ← remove node with lowest cost from PQ
+    for each output_neuron:
+        o = Σ(hidden * weight) + bias
+        apply activation
 
-if node is in VISITED then
-    continue
-add node to VISITED
+    return output
+```
 
-if node = goal then
-    return cost
+---
 
-for each neighbour with edge cost in G[node] do
-    if neighbour not in VISITED then
-        insert (cost + edge_cost, neighbour) into PQ
-return NO SOLUTION GREEDY_BEST_FIRST_SEARCH(G, H, start, goal)
+## Prolog — Knowledge Base (General Form)
 
-create empty set VISITED create priority queue PQ
+```
+fact(x).
+relation(a,b).
 
-insert (H[start], start) into PQ // heuristic, node
-
-while PQ is not empty do (h, node) ← remove node with lowest heuristic from PQ
-
-if node is in VISITED then
-    continue
-add node to VISITED
-
-if node = goal then
-    return SUCCESS
-
-for each neighbour in G[node] do
-    if neighbour not in VISITED then
-        insert (H[neighbour], neighbour) into PQ
-return FAILURE MINIMAX(node, depth, maximizingPlayer)
-
-if depth = 0 OR node is terminal then return evaluation of node
-
-if maximizingPlayer then best ← −∞ for each child of node do value ← MINIMAX(child, depth−1, FALSE) best ← max(best, value) return best
-
-else best ← +∞ for each child of node do value ← MINIMAX(child, depth−1, TRUE) best ← min(best, value) return best CRYPTARITHMETIC(words, result)
-
-extract all unique letters assign each letter a unique digit (0–9)
-
-for each possible digit assignment do if leading letter has value 0 then continue
-
-convert words and result to numbers
-if sum of word values = result value then
-    return valid assignment
+rule(X,Y) :-
+    condition1(X),
+    condition2(Y).
